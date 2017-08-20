@@ -8,12 +8,14 @@ class Invader {
     void slide();
     void draw();
     void update();
+    void hit();
 
   private:
     int x;
     int y;
     int vx;
     int turn;
+    bool alive;
 };
 
 #endif
@@ -23,23 +25,34 @@ Invader::Invader(int _x, int _y, int _vx) {
   y  = _y;
   vx = _vx;
   turn = 0;
+  alive = true;
 }
 void Invader::slide(void) {
   turn++;
-  if (turn == 3) {
+  if (turn == 5) {
     turn = 0;
-    if (x + vx <= 0 || 84 <= x + vx) {
+    if (x + vx <= 0 || 80 <= x + vx) {
       vx *= -1;
+      y++;
+    } else {
+      x += vx;
     }
-    x += vx;
   }
 }
 void Invader::draw(void) {
   gotoXY(x, y);
-  LCDString("i");
+  LCDString("x");
 }
 void Invader::update(void) {
-  slide();
-  draw();
+  if (alive) {
+    slide();
+    draw();
+  }
 }
+void Invader::hit(void) {
+  alive = false;
+}
+
+
+
 

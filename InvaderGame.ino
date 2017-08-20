@@ -15,7 +15,7 @@
 #define PIN_OK     0
 
 //The DC pin tells the LCD if we are sending a command or data
-#define LCD_COMMAND 0 
+#define LCD_COMMAND 0
 #define LCD_DATA    1
 
 //You may find a different size screen, but this one is 84 by 48 pixels
@@ -24,18 +24,22 @@
 
 #include "LCD.h"
 
+//===================================
+#include "Bullet.h"
+int bullet_num = 10;
+Bullet bullets[10];
+
+#include "Player.h"
 #include "Invader.h"
 
-int str_x = LCD_X/2;
-int invaders_x[] = {10, 20, 30};
-int invaders_y[] = {0, 1, 2};
-int invaders_direct[] = {5, 5, 5};
-
-Invader inv = Invader(10, 0, 5);
+Player player = Player();
+Invader invaders[2];
+//===================================
 
 void setup() {
   LCDInit(); //Init the LCD
   LCDClear();
+  invaders[0] = Invader(10, 0, 5);
 }
 
 void loop() {
@@ -43,14 +47,22 @@ void loop() {
 
   inv.update();
 
+  if (!digitalRead(PIN_LEFT))  {
+    player.move_left();
+  }
   if (!digitalRead(PIN_RIGHT)) {
-    str_x+=5;
+    player.move_right();
   }
-  if (!digitalRead(PIN_LEFT)) {
-    str_x-=5;
+  if (!digitalRead(PIN_OK)) {
+    player.shoot();
   }
-  gotoXY(str_x, 4);
-  LCDString("u");
+  player.draw();
+
+  for (int i = 0; i < bullet_num; i++) {
+    if (bullets[i].running) {
+      bullets[i].run();
+    }
+  }
 
   delay(300);
 }
